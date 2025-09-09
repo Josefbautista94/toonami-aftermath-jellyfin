@@ -1,0 +1,3 @@
+# Update Toonami Aftermath EPG hourly (example)
+# Put something like this in /etc/cron.d/ta-epg
+7 * * * * root /usr/local/bin/ta_epg_api.py >/var/log/ta_epg.log 2>&1
