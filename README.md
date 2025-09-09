@@ -1,32 +1,38 @@
 # Toonami Aftermath EPG Generator for Jellyfin
 
-This project provides a custom XMLTV guide generator for streaming **Toonami Aftermath** (East, Pacific, and Movies) directly in **Jellyfin** using static M3U streams and a dynamic EPG. It includes the Python script, cron example, and setup instructions for running it on a Linux-based media server (e.g. Rock64, Raspberry Pi, etc.).
+This project provides a custom XMLTV guide generator for streaming **Toonami Aftermath** (East, Pacific, and Movies) directly in **Jellyfin** using static M3U streams and a dynamic EPG.
+
+It's designed to run easily on Linux-based media servers (like Rock64, Raspberry Pi, etc.) and includes setup for **cron automation**, **channel artwork**, **GIF support**, and **EPG metadata** (title, block, year, rating, episode).
+
+> 🙌 **Contributions are welcome!** If you'd like to improve this project, feel free to open a PR. Let’s keep retro TV alive in Jellyfin!
 
 ---
 
 ## 🛠 Features
 
-- Pulls live schedule data from Toonami Aftermath API
-- Outputs a Jellyfin-compatible XMLTV file with:
-  - Titles, episode names, and air times
-  - Descriptions with block name, season/episode, year
-  - Channel icons (including animated GIFs)
-- Supports:
-  - East stream
-  - Pacific stream (with delay)
+- ✅ Pulls live Toonami Aftermath schedule from the official API
+- ✅ Outputs Jellyfin-compatible XMLTV with:
+  - Titles and episode names
+  - Descriptions with block, year, rating, and episode info
+  - Channel icons (animated GIFs supported!)
+- ✅ Supports:
+  - Toonami East stream
+  - Pacific stream (180-minute delay)
   - Movies stream
+- ✅ Hourly updates via cron
+- ✅ Works with static `.m3u8` tuners
 
 ---
 
-## 📁 Files
+## 📁 Project Structure
 
 ```
 toonami-jellyfin-epg/
-├── ta_epg_api.py              # Main Python script to generate EPG
+├── ta_epg_api.py              # Main Python EPG generator script
 ├── examples/
-│   └── cron-hourly.ta-epg     # Sample cron job for hourly EPG updates
+│   └── cron-hourly.ta-epg     # Sample cron job for hourly updates
 ├── LICENSE                    # MIT license
-└── README.md                  # You're here
+└── README.md                  # This file!
 ```
 
 ---
@@ -46,34 +52,47 @@ cd toonami-aftermath-jellyfin
 sudo install -m 0755 ta_epg_api.py /usr/local/bin/ta_epg_api.py
 ```
 
-### 3. Run the script manually to test
+### 3. Generate the guide manually
 
 ```bash
 sudo /usr/local/bin/ta_epg_api.py
 ```
 
-This generates:  
-`/var/lib/jellyfin/data/ToonamiAftermathGuide.xml`
+✅ This creates: `/var/lib/jellyfin/data/ToonamiAftermathGuide.xml`
 
 ---
 
-## 🧠 Set up Jellyfin
+## 🧠 Setup in Jellyfin
 
-### Add M3U tuner
+### Add M3U Tuner:
 
-1. Go to **Dashboard → Live TV → Tuner Devices**
-2. Add M3U tuner with one of these:
-   - Toonami East: `https://raw.githubusercontent.com/kbmystery7/TAM3U8/main/TAM3U8.m3u8`  
-   - Or your own custom `.m3u` if hosting locally
+Dashboard → Live TV → Tuner Devices → Add M3U Tuner
 
-### Add XMLTV EPG
+Example URL:
 
-1. Still under **Live TV → TV Guide Data Providers**
-2. Add XMLTV:
-   - Path: `/var/lib/jellyfin/data/ToonamiAftermathGuide.xml`
-3. Match the **channel ID** with M3U `tvg-id` (`ta.east`, `ta.pacific`, `ta.movies`)
+```
+https://raw.githubusercontent.com/kbmystery7/TAM3U8/main/TAM3U8.m3u8
+```
 
-### Restart Jellyfin
+Or use your own `.m3u8` pointing to:
+- `ta.east`
+- `ta.pacific`
+- `ta.movies`
+
+### Add XMLTV EPG:
+
+Dashboard → Live TV → TV Guide Data Providers → Add XMLTV
+
+```
+Path: /var/lib/jellyfin/data/ToonamiAftermathGuide.xml
+```
+
+Channel IDs must match:
+- `ta.east`
+- `ta.pacific`
+- `ta.movies`
+
+Then restart Jellyfin:
 
 ```bash
 sudo systemctl restart jellyfin
@@ -82,8 +101,6 @@ sudo systemctl restart jellyfin
 ---
 
 ## ⏲️ Automate with Cron
-
-Run the script every hour to keep EPG fresh:
 
 ```bash
 sudo tee /etc/cron.d/ta-epg >/dev/null <<EOF
@@ -96,18 +113,18 @@ sudo systemctl reload cron || sudo service cron reload
 
 ---
 
-## 🐧 SSH + GitHub Setup (for Rock64)
+## 🐧 Rock64 / Raspberry Pi GitHub Setup (Optional)
 
-To push this repo from your Rock64:
+1. Generate an SSH key:
 
 ```bash
-ssh-keygen -t ed25519 -C "Josef.bautista22@gmail.com"
-cat ~/.ssh/id_ed25519.pub
+ssh-keygen -t ed54619 -C "example@gmail.com"
+cat ~/.ssh/id_ed54619.pub
 ```
 
-Add the SSH key to GitHub under **Settings → SSH and GPG Keys**.
+2. Add to GitHub → Settings → SSH Keys
 
-Test connection:
+3. Test it:
 
 ```bash
 ssh -T git@github.com
@@ -115,15 +132,16 @@ ssh -T git@github.com
 
 ---
 
-## 🙌 Credits
+## 🙏 Credits
 
-- Developed by **Jose Bautista** on Rock64
-- Inspired by the Toonami Aftermath community
-- Reverse-engineered schedule API using Python
-- Shoutout to Redditors and tinkerers keeping retro TV alive
+- 👨‍💻 Created by **Jose Bautista** on a Rock64
+- 🔍 API reverse-engineered with `curl` and `Python`
+- 📺 Inspired by the **Toonami Aftermath** community
+- ❤️ Shoutout to Reddit’s r/RetroTVRevival for inspiration
+- 🐍 Built with love, Python, gifs, and terminal hustle
 
 ---
 
 ## 📄 License
 
-This project is open-source and available under the **MIT License**.
+MIT License — free to use, modify, share.
